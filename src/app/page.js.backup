@@ -133,82 +133,105 @@ export default function Home() {
           </AlertDescription>
         </Alert>
       )}
-      <div className="flex-1 w-full max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-start mt-12 md:mt-24">
-          <div>
-            <div className="sm:ml-6 md:ml-16 lg:ml-32">
-              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold">
-                FreeOCR
-              </h1>
-              <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-sans italic">
-                OCR without bullshit.
-              </h2>
-            </div>
-            <div className="flex flex-col lg:items-start gap-8 relative max-w-7xl mt-4 ">
-              <div className="sm:ml-6 md:ml-16 lg:ml-32 flex flex-col md:flex-row gap-4">
-                <Dropzone
-                  accept={{ "image/*": [] }}
-                  maxFiles={1}
-                  onDrop={handleDrop}
-                  className={
-                    "w-full max-w-sm h-48 sm:w-64 sm:h-64 md:w-64 md:h-64 lg:w-80 lg:h-80 border-2 border-dashed rounded-lg flex items-center justify-center p-4 cursor-pointer mx-auto md:mx-0"
-                  }
-                >
-                  <DropzoneContent>
-                    {file ? (
-                      <>
-                        <p className="text-center mb-2">File: {file.name}</p>
-                        <div className="relative w-full h-full">
-                          <Image
-                            src={URL.createObjectURL(file)}
-                            alt={file.name}
-                            fill
-                            className="object-contain"
-                            unoptimized
-                          />
-                        </div>
-                      </>
-                    ) : (
-                      <DropzoneEmptyState>
-                        <p className="text-center break-words whitespace-normal">
-                          Drag and drop an image file here, paste it, or click
-                          to select one.
-                        </p>
-                      </DropzoneEmptyState>
-                    )}
-                  </DropzoneContent>
-                </Dropzone>
-                <div className="flex flex-col gap-4 w-full max-w-sm mx-auto md:mx-0 md:ml-4">
-                  <Select onValueChange={(value) => setLanguage(value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto">Auto Detect</SelectItem>
-                      <SelectItem value="eng">English</SelectItem>
-                      <SelectItem value="por">Portuguese</SelectItem>
-                      <SelectItem value="spa">Spanish</SelectItem>
-                      <SelectItem value="fra">French</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button onClick={extractText} disabled={isLoading}>
-                    {isLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : null}
-                    {isLoading ? "Extracting..." : "Extract Text"}
-                  </Button>
-                </div>
-              </div>
-            </div>
+      <div className="flex-col flex-1 w-full max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start mt-12 md:mt-24">
+          <div className="sm:ml-6 md:ml-16 lg:ml-32">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold">
+              FreeOCR
+            </h1>
+            <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-sans italic">
+              OCR without bullshit.
+            </h2>
           </div>
 
-          <div className="flex flex-col justify-start w-full max-w-2xl mx-auto lg:mx-0 lg:max-w-lg px-4 sm:px-6 md:px-16 lg:px-0">
+          <div className="hidden lg:flex flex-col justify-start lg:max-w-lg lg:mr-32">
             <Label htmlFor="extractedText" className="mb-2">
               Extracted Text
             </Label>
             <div
               id="extractedText"
-              className="w-full h-48 sm:h-64 md:h-80 lg:h-96 whitespace-pre-wrap break-words overflow-auto rounded-md border border-gray-300 text-white font-sans italic p-3 text-sm select-text"
+              className="w-full h-96 whitespace-pre-wrap break-words overflow-auto rounded-md border border-gray-300 text-white font-sans italic p-3 text-sm select-text"
+              role="textbox"
+              aria-readonly="true"
+            >
+              {extractedText || "The extracted text will appear here."}
+            </div>
+            <Button
+              onClick={copyToClipboard}
+              className="mt-4 w-32 self-center"
+              disabled={!extractedText}
+            >
+              Copy
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row lg:items-start gap-8 relative max-w-7xl mt-4">
+          <div className="sm:ml-6 md:ml-16 lg:ml-32 flex flex-col md:flex-row gap-4">
+            <Dropzone
+              accept={{ "image/*": [] }}
+              maxFiles={1}
+              onDrop={handleDrop}
+              className={
+                "w-full max-w-sm h-48 sm:w-64 sm:h-64 md:w-64 md:h-64 lg:w-80 lg:h-80 border-2 border-dashed rounded-lg flex items-center justify-center p-4 cursor-pointer mx-auto md:mx-0"
+              }
+            >
+              <DropzoneContent>
+                {file ? (
+                  <>
+                    <p className="text-center mb-2">File: {file.name}</p>
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={URL.createObjectURL(file)}
+                        alt={file.name}
+                        fill
+                        className="object-contain"
+                        unoptimized
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <DropzoneEmptyState>
+                    <p className="text-center break-words whitespace-normal">
+                      Drag and drop an image file here, paste it, or click to
+                      select one.
+                    </p>
+                  </DropzoneEmptyState>
+                )}
+              </DropzoneContent>
+            </Dropzone>
+            <div className="flex flex-col gap-4 w-full max-w-sm mx-auto md:mx-0 md:ml-4">
+              <Select onValueChange={(value) => setLanguage(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">Auto Detect</SelectItem>
+                  <SelectItem value="eng">English</SelectItem>
+                  <SelectItem value="por">Portuguese</SelectItem>
+                  <SelectItem value="spa">Spanish</SelectItem>
+                  <SelectItem value="fra">French</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={extractText}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {isLoading ? "Extracting..." : "Extract Text"}
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-start w-full max-w-2xl mx-auto lg:hidden px-4 sm:px-6 md:px-16">
+            <Label htmlFor="extractedText" className="mb-2">
+              Extracted Text
+            </Label>
+            <div
+              id="extractedText"
+              className="w-full h-48 sm:h-64 md:h-80 whitespace-pre-wrap break-words overflow-auto rounded-md border border-gray-300 text-white font-sans italic p-3 text-sm select-text"
               role="textbox"
               aria-readonly="true"
             >
