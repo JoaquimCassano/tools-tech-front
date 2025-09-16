@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dropzone,
@@ -64,13 +63,6 @@ export default function Home() {
         const data = await response.json();
         setExtractedText(data.text);
         setIsLoading(false);
-        //setExtractedText(`Run OCR inference on Modal by wrapping with app.function.
-
-        // Now let's set up the actual OCR inference.
-
-        // Using the Qapp.function decorator, set up a Modal Function. Provide arguments to the decorator to customize the hardware, scaling, and other features of the function.
-
-        // This function uses NVIDIA L40S GPUs, retries failures up to 3 times, and has access to the shared model cache.`);
       };
       reader.readAsDataURL(file);
     } catch (error) {
